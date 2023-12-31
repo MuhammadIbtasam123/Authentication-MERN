@@ -38,7 +38,6 @@ const User = new mongoose.Schema({
   });
 
     // encrypting password using mongoose-encryption
-    var secret = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     User.plugin(encrypt, { secret: process.env.SECRET , encryptedFields: ['password']});
 
 // creating user model

@@ -14,7 +14,7 @@ const Signup = ({AccountName}) => {
     const [confirmpassword, setConfirmPassword] = useState('')
     const [cnic, setCnic] = useState('')
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         // Check if any field is empty
         (username === '' || email === '' || password === '' || confirmpassword === '' || cnic === '') && alert("Please fill all the fields")
@@ -30,16 +30,27 @@ const Signup = ({AccountName}) => {
         cnicFormat = cnicFormat.slice(0,5) + '-' + cnicFormat.slice(5,12) + '-' + cnicFormat.slice(12,13)
     
         try {
-            const response = axios.post('http://localhost:3001/signup', {
+            const response = await axios.post('http://localhost:3001/signup', {
                 username: username,
                 email: email,
                 password: password,
                 confirmpassword: confirmpassword,
                 cnic: cnicFormat
               })
-            console.log("Forntend sa backend pa data chala gaya hai response ka wait hai !",response);
+
+            await response.then((res) => {
+                if (res.status === 200) {
+                    // notification for successful signup
+                    alert("Signup Successful")
+                }
+                else if (res.status === 500) {
+                    // notification for unsuccessful signup
+                    alert("Username or Email already exist")
+                }
+            })
+              
         } catch (error) {
-            console.log("Error in sending data to backend",error);
+            console.log(error)
         }
     }
 

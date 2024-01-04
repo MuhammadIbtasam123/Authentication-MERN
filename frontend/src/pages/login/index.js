@@ -7,11 +7,15 @@ import './index.css'
 import { Link } from 'react-router-dom';
 import UserImg from '../../assets/USer.png'
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Login = ({AccountName}) => {
 
     // Dynamic states for input fields
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    // const [error, setError] = useState('')
 
     // handling login request
     const handleLogin = async (event)=>{
@@ -23,21 +27,28 @@ const Login = ({AccountName}) => {
                 password: password,
               })
 
-            // handling response from backend
-            await response.then((res) => {
-                if (res.status === 200) {
-                    // notification for successful login
-                    // redirect to dashboard page 
-                    console.log(res)
-                    alert("Login Successful")
-                }
-                else if (res.status === 500) {
-                    // notification for unsuccessful signup
-                    // redirect to login page again with error message 
-                    alert("Invalid username or password")
-                }
-            })
-              
+              if (response.status === 200) {
+                // notification for successful login
+                // redirect to dashboard page 
+                toast.success(response.data.message,{
+                    position: "top-center",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    })
+                // alert(response.data.message)
+
+            }
+            else if(response.status === 500) {
+                // notification for unsuccessful signup
+                // redirect to login page again with error message 
+                alert(response.data.message)
+            }
+
         } catch (error) {
             console.log(error)
         }
@@ -82,6 +93,7 @@ const Login = ({AccountName}) => {
                     </Link>
             </Box>
         </Box>
+        <ToastContainer />
     </Box>
   )
 }

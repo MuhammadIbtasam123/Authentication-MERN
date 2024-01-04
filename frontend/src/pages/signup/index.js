@@ -5,6 +5,9 @@ import React from 'react'
 import './index.css'
 import UserImg from '../../assets/USer.png'
 import {useState} from 'react'
+import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = ({AccountName}) => {
     // Dynamic states for input fields
@@ -14,21 +17,40 @@ const Signup = ({AccountName}) => {
     const [confirmpassword, setConfirmPassword] = useState('')
     const [cnic, setCnic] = useState('')
 
+    const showToast = (message, type) => {
+        toast[type](message, {
+            position: 'top-center',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored',
+        });
+    };
+
     const handleRegister = async (e) => {
         e.preventDefault();
         // Check if any field is empty
-        (username === '' || email === '' || password === '' || confirmpassword === '' || cnic === '') && alert("Please fill all the fields")
+        if (!username || !email || !password || !confirmpassword || !cnic) {
+            showToast('Please fill all the fields', 'error');
+            return;
+        }
 
         // Check if password and confirm password are same
-        (password !== confirmpassword) && alert("Password and Confirm Password are not same")    
+        if (password !== confirmpassword) {
+            showToast('Password and Confirm Password are not the same', 'error');
+            return;
+        }
 
-        // chehc if cnic is 13 digits
-        cnic.length !== 13 && alert("CNIC should be 13 digits")
+        // Check if CNIC is valid
+        if (cnic.length !== 13) {
+            showToast('CNIC should be 13 digits', 'error');
+            return;
+        }
+        const cnicFormat = `${cnic.slice(0, 5)}-${cnic.slice(5, 12)}-${cnic.slice(12, 13)}`;
 
-        // parsing cnic to format of 35202-8368021-7
-        let cnicFormat = cnic.toString()
-        cnicFormat = cnicFormat.slice(0,5) + '-' + cnicFormat.slice(5,12) + '-' + cnicFormat.slice(12,13)
-    
         try {
             const response = await axios.post('http://localhost:3001/signup', {
                 username: username,
@@ -38,16 +60,11 @@ const Signup = ({AccountName}) => {
                 cnic: cnicFormat
               })
 
-            await response.then((res) => {
-                if (res.status === 200) {
-                    // notification for successful signup
-                    alert("Signup Successful")
-                }
-                else if (res.status === 500) {
-                    // notification for unsuccessful signup
-                    alert("Username or Email already exist")
-                }
-            })
+              if (response.status === 200) {
+                showToast('Signup Successful!', 'success');
+            } else if (response.status === 500) {
+                showToast('Error SignUp!', 'error');
+            }
               
         } catch (error) {
             console.log(error)
@@ -129,8 +146,12 @@ const Signup = ({AccountName}) => {
                     type='button'
                     onClick={handleRegister}
                     >Register</button>
+                    <Link to="/login" className="forgot-password">
+                        Have an account? Login
+                    </Link>
             </Box>
         </Box>
+        <ToastContainer />
     </Box>
   )
 }

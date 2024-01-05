@@ -5,9 +5,12 @@ import React from 'react'
 import './index.css'
 import UserImg from '../../assets/USer.png'
 import {useState} from 'react'
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const Signup = ({AccountName}) => {
     // Dynamic states for input fields
@@ -16,6 +19,8 @@ const Signup = ({AccountName}) => {
     const [password, setPassword] = useState('')
     const [confirmpassword, setConfirmPassword] = useState('')
     const [cnic, setCnic] = useState('')
+    const [showToastFlag, setShowToastFlag] = useState(false);
+    const history = useHistory();
 
     const showToast = (message, type) => {
         toast[type](message, {
@@ -62,15 +67,27 @@ const Signup = ({AccountName}) => {
 
               if (response.status === 200) {
                 showToast('Signup Successful!', 'success');
+                // redirect to Landing page using react router
+                // history.push('/login');
             } else if (response.status === 500) {
                 showToast('Error SignUp!', 'error');
             }
               
         } catch (error) {
-            console.log(error)
+            showToast('Error SignUp!', 'error');
         }
     }
 
+    
+    useEffect(() => {
+        let timer;
+        if (showToastFlag) {
+            timer = setTimeout(() => {
+                history.push('/login');
+            }, 2000); // Redirect to login after 2 seconds when toast is shown
+        }
+        return () => clearTimeout(timer);
+    }, [showToastFlag, history]);
   return (
     <Box className="LoginContainer">
         <Box className="LoginBox">

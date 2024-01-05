@@ -59,7 +59,7 @@ const Login = ({AccountName}) => {
 
         } catch (error) {
             // console.log(error)
-            showToast('Error Login!', 'error');
+            showToast('Email or Password incoorect !', 'error');
 
         }
     }
@@ -101,7 +101,7 @@ const Login = ({AccountName}) => {
                     <Link href="#" className="forgot-password">
                         Forgot Password?
                     </Link>
-                    <Link to='/signup'>Don't have an account? Sign Up</Link>
+                    <Link to='/signup' className="forgot-password">Don't have an account? Sign Up</Link>
                     
             </Box>
         </Box>
